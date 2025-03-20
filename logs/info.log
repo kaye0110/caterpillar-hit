@@ -1,0 +1,33 @@
+2025-03-20 13:50:51,262 - DeepSeekMgmt.py:30 - INFO - init deepseek client 0 with url https://api.openai.com
+2025-03-20 13:50:51,275 - AzureMgmt.py:33 - INFO - init azure openai client 0 with url https://api.openai.com
+2025-03-20 13:50:51,279 - BatchConfig.py:44 - INFO - init_scheduler
+2025-03-20 13:50:51,281 - base.py:214 - INFO - Scheduler started
+2025-03-20 13:51:52,879 - application.py:29 - INFO - Shutting down...
+2025-03-20 13:51:52,879 - base.py:245 - INFO - Scheduler has been shut down
+2025-03-20 13:51:53,588 - DeepSeekMgmt.py:30 - INFO - init deepseek client 0 with url https://api.openai.com
+2025-03-20 13:51:53,604 - AzureMgmt.py:33 - INFO - init azure openai client 0 with url https://api.openai.com
+2025-03-20 13:51:53,607 - BatchConfig.py:44 - INFO - init_scheduler
+2025-03-20 13:51:53,609 - base.py:214 - INFO - Scheduler started
+2025-03-20 13:51:56,558 - ok_controller.py:14 - INFO - ok
+2025-03-20 13:52:48,225 - DeepSeekMgmt.py:30 - INFO - init deepseek client 0 with url https://api.openai.com
+2025-03-20 13:52:48,242 - AzureMgmt.py:33 - INFO - init azure openai client 0 with url https://api.openai.com
+2025-03-20 13:52:48,929 - BatchConfig.py:44 - INFO - init_scheduler
+2025-03-20 13:52:48,956 - base.py:214 - INFO - Scheduler started
+2025-03-20 13:53:23,864 - ok_controller.py:14 - INFO - ok
+2025-03-20 13:55:14,124 - DeepSeekMgmt.py:30 - INFO - init deepseek client 0 with url https://api.openai.com
+2025-03-20 13:55:14,136 - AzureMgmt.py:33 - INFO - init azure openai client 0 with url https://api.openai.com
+2025-03-20 13:55:14,140 - BatchConfig.py:43 - INFO - init_scheduler
+2025-03-20 13:55:14,141 - base.py:214 - INFO - Scheduler started
+2025-03-20 13:55:16,843 - ok_controller.py:14 - INFO - ok
+2025-03-20 13:55:25,633 - ok_controller.py:14 - INFO - ok
+2025-03-20 13:55:31,001 - ok_controller.py:14 - INFO - ok
+2025-03-20 13:56:53,607 - DeepSeekMgmt.py:30 - INFO - init deepseek client 0 with url https://api.openai.com
+2025-03-20 13:56:53,621 - AzureMgmt.py:33 - INFO - init azure openai client 0 with url https://api.openai.com
+2025-03-20 13:56:53,624 - BatchConfig.py:43 - INFO - init_scheduler
+2025-03-20 13:56:53,626 - base.py:214 - INFO - Scheduler started
+2025-03-20 13:57:00,285 - ok_controller.py:14 - INFO - ok
+2025-03-20 13:57:01,031 - ok_controller.py:14 - INFO - ok
+2025-03-20 13:57:01,616 - ok_controller.py:14 - INFO - ok
+2025-03-20 13:57:02,089 - ok_controller.py:14 - INFO - ok
+2025-03-20 14:10:58,128 - application.py:28 - INFO - Shutting down...
+2025-03-20 14:10:58,130 - base.py:245 - INFO - Scheduler has been shut down

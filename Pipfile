@@ -1,0 +1,23 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+fastapi = "*"
+sqlalchemy = "*"
+python-dotenv = "*"
+pandas = "*"
+numpy = "*"
+requests = "*"
+uvicorn = "*"
+openai = "*"
+psycopg2-binary = "*"
+pydantic = "*"
+apscheduler = "*"
+futu-api = "*"
+
+[dev-packages]
+
+[requires]
+python_version = "3.12"
