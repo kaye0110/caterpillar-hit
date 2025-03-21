@@ -25,6 +25,8 @@ class QuoteCalculator:
         # 重置索引，将 code 从索引中移除
         grouped = grouped.reset_index(drop=True)
         grouped = grouped.dropna(subset=['last_price'])
+
+        grouped['change_rate'] = round((grouped['last_price'] - grouped['open_price']) / grouped['open_price'], 4)
         # 计算一阶导数（价格变化速度）
         grouped['first_derivative'] = grouped.groupby('code')['last_price'].diff()
 
@@ -64,18 +66,18 @@ class QuoteCalculator:
         falling_top_10_acceleration_mean = falling_second_derivative_mean.nsmallest(10, 'second_derivative_mean')
 
         print("上涨 - 变化速度前 10:")
-        print(rising_top_10_speed[['code', 'name', 'first_derivative']])
+        print(rising_top_10_speed[['code', 'name', 'first_derivative', 'change_rate']])
         print("上涨 - 加速度前 10:")
-        print(rising_top_10_acceleration[['code', 'name', 'second_derivative']])
+        print(rising_top_10_acceleration[['code', 'name', 'second_derivative', 'change_rate']])
         print("上涨 - 加速度 Mean 前 10:")
-        print(rising_top_10_acceleration_mean[['code', 'name', 'second_derivative']])
+        print(rising_top_10_acceleration_mean[['code', 'second_derivative_mean']])
 
         print("下跌 - 变化速度前 10:")
-        print(falling_top_10_speed[['code', 'name', 'first_derivative']])
+        print(falling_top_10_speed[['code', 'name', 'first_derivative', 'change_rate']])
         print("下跌 - 加速度前 10:")
-        print(falling_top_10_acceleration[['code', 'name', 'second_derivative']])
+        print(falling_top_10_acceleration[['code', 'name', 'second_derivative', 'change_rate']])
         print("下跌 - 加速度 Mean 前 10:")
-        print(falling_top_10_acceleration_mean[['code', 'name', 'second_derivative']])
+        print(falling_top_10_acceleration_mean[['code', 'second_derivative_mean']])
 
         return self
 
