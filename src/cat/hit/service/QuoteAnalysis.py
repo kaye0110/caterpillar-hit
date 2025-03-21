@@ -13,8 +13,8 @@ class QuoteAnalysis:
         self.rising_data = None
         self.falling_data = None
 
-        self.result_rising = None
-        self.result_falling = None
+        self.result_rising = []
+        self.result_falling = []
 
         self.top_size = 10
         pass
@@ -61,42 +61,59 @@ class QuoteAnalysis:
         falling_top_acceleration = self.falling_data.nsmallest(self.top_size, 'second_derivative')
         falling_top_acceleration_mean = self.falling_data.nsmallest(self.top_size, 'second_derivative_mean')
 
-        result_rising_top_speed = rising_top_speed.apply(lambda row: self._convert_to_entity(row), axis=1).tolist()
-        result_rising_top_acceleration = rising_top_acceleration.apply(lambda row: self._convert_to_entity(row), axis=1).tolist()
-        result_rising_top_acceleration_mean = rising_top_acceleration_mean.apply(lambda row: self._convert_to_entity(row), axis=1).tolist()
+        if rising_top_speed is not None and len(rising_top_speed) > 0:
+            result_rising_top_speed = rising_top_speed.apply(lambda row: self._convert_to_entity(row), axis=1).values.tolist()
+            self.result_rising = self.result_rising + result_rising_top_speed
+            logging.getLogger(__name__).info("rising_top_speed: %s", result_rising_top_speed)
 
-        result_falling_top_speed = falling_top_speed.apply(lambda row: self._convert_to_entity(row), axis=1).tolist()
-        result_falling_top_acceleration = falling_top_acceleration.apply(lambda row: self._convert_to_entity(row), axis=1).tolist()
-        result_falling_top_acceleration_mean = falling_top_acceleration_mean.apply(lambda row: self._convert_to_entity(row), axis=1).tolist()
+        if rising_top_acceleration is not None and len(rising_top_acceleration) > 0:
+            result_rising_top_acceleration = rising_top_acceleration.apply(lambda row: self._convert_to_entity(row), axis=1).values.tolist()
+            self.result_rising = self.result_rising + result_rising_top_acceleration
+            logging.getLogger(__name__).info("rising_top_acceleration: %s", result_rising_top_acceleration)
 
-        logging.getLogger(__name__).info("rising_top_speed: %s", result_rising_top_speed)
-        logging.getLogger(__name__).info("rising_top_acceleration: %s", result_rising_top_acceleration)
-        logging.getLogger(__name__).info("rising_top_acceleration_mean: %s", result_rising_top_acceleration_mean)
-        logging.getLogger(__name__).info("falling_top_speed: %s", result_falling_top_speed)
-        logging.getLogger(__name__).info("falling_top_acceleration: %s", result_falling_top_acceleration)
-        logging.getLogger(__name__).info("falling_top_acceleration_mean: %s", result_falling_top_acceleration_mean)
+        if rising_top_acceleration_mean is not None and len(rising_top_acceleration_mean) > 0:
+            result_rising_top_acceleration_mean = rising_top_acceleration_mean.apply(lambda row: self._convert_to_entity(row), axis=1).values.tolist()
+            self.result_rising = self.result_rising + result_rising_top_acceleration_mean
+            logging.getLogger(__name__).info("rising_top_acceleration_mean: %s", result_rising_top_acceleration_mean)
 
-        self.result_rising = result_rising_top_speed + result_rising_top_acceleration + result_rising_top_acceleration_mean
+        if falling_top_speed is not None and len(falling_top_speed) > 0:
+            result_falling_top_speed = falling_top_speed.apply(lambda row: self._convert_to_entity(row), axis=1).values.tolist()
+            self.result_falling = self.result_falling + result_falling_top_speed
+            logging.getLogger(__name__).info("falling_top_speed: %s", result_falling_top_speed)
+
+        if falling_top_acceleration is not None and len(falling_top_acceleration) > 0:
+            result_falling_top_acceleration = falling_top_acceleration.apply(lambda row: self._convert_to_entity(row), axis=1).values.tolist()
+            self.result_falling = self.result_falling + result_falling_top_acceleration
+            logging.getLogger(__name__).info("falling_top_acceleration: %s", result_falling_top_acceleration)
+
+        if falling_top_acceleration_mean is not None and len(falling_top_acceleration_mean) > 0:
+            result_falling_top_acceleration_mean = falling_top_acceleration_mean.apply(lambda row: self._convert_to_entity(row), axis=1).values.tolist()
+            self.result_falling = self.result_falling + result_falling_top_acceleration_mean
+            logging.getLogger(__name__).info("falling_top_acceleration_mean: %s", result_falling_top_acceleration_mean)
 
         return self
 
     @staticmethod
     def _convert_to_entity(row):
-        data = {"code": row['code'],
-                "name": row['name'],
-                "first_derivative": row['first_derivative'],
-                "open_price": row['open_price'],
-                "close_price": row['close_price'],
-                "high_price": row['high_price'],
-                "low_price": row['low_price'],
-                "pre_close_price": row['pre_close_price'],
-                "change_rate": row['change_rate'],
-                "second_derivative": row['second_derivative'],
-                "second_derivative_mean": row['second_derivative_mean'],
-                "last_sec_derivative": row['last_sec_derivative'],
-                "last_sec_derivative_mean": row['last_sec_derivative_mean'],
-                "rank": 0,
-                "last_rank": 0}
+        data = {
+            "code": row.get('code', None),
+            "name": row.get('name', None),
+            "data_date": row.get('data_date', None),
+            "data_time": row.get('data_time', None),
+            "first_derivative": row.get('first_derivative', 0),
+            "last_price": row.get('last_price', 0),
+            "open_price": row.get('open_price', 0),
+            "high_price": row.get('high_price', 0),
+            "low_price": row.get('low_price', 0),
+            "pre_close_price": row.get('prev_close_price', 0),
+            "change_rate": row.get('change_rate', 0),
+            "second_derivative": row.get('second_derivative', 0),
+            "second_derivative_mean": row.get('second_derivative_mean', 0),
+            "last_sec_derivative": row.get('last_sec_derivative', 0),
+            "last_sec_derivative_mean": row.get('last_sec_derivative_mean', 0),
+            "rank": 0,
+            "last_rank": 0
+        }
         return Rank(**data)
 
     @staticmethod

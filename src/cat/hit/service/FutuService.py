@@ -1,9 +1,12 @@
 from futu import *
 
+from src.cat.common.config.LoggerMgmt import LoggerMgmt
 from src.cat.hit.service.QuoteAnalysis import QuoteAnalysis
 from src.cat.hit.service.QuoteHolder import QuoteHolder
 
 quote = QuoteHolder()
+logger = LoggerMgmt()
+
 
 class QuoteHandler(StockQuoteHandlerBase):
     # 定义一个处理股票报价的类，继承自StockQuoteHandlerBase
@@ -34,7 +37,7 @@ class FutuService:
         quote_ctx = OpenQuoteContext(host='127.0.0.1', port=11111)
         handler = QuoteHandler()
         quote_ctx.set_handler(handler)  # 设置实时报价回调
-        ret, data = quote_ctx.subscribe(['SH.600021', 'SH.600020', 'SH.600022', 'SH.600025'], [SubType.QUOTE])  # 订阅实时报价类型，OpenD 开始持续收到服务器的推送
+        ret, data = quote_ctx.subscribe(['HK.00700', 'SH.600021', 'SH.600020', 'SH.600022', 'SH.600025'], [SubType.QUOTE])  # 订阅实时报价类型，OpenD 开始持续收到服务器的推送
         if ret == RET_OK:
             print(data)
         else:
