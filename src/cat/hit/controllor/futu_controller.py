@@ -1,16 +1,29 @@
 import asyncio
 import logging
+import threading
 import traceback
 
 from fastapi import APIRouter
 from fastapi.websockets import WebSocket
 
+from src.cat.common.model.Response import success
 from src.cat.hit.model.Rank import Rank
+from src.cat.hit.service.FutuService import FutuService
 from src.cat.hit.service.RankHolder import RankHolder
 
 logger = logging.getLogger(__name__)
 
 router = APIRouter()
+
+
+def start_subscribe():
+    FutuService().unsubscribe().subscribe()
+
+
+@router.get("/subscribe")
+async def ok():
+    threading.Thread(target=start_subscribe).start()
+    return success(data="subscribed")
 
 
 @router.websocket("/ws")

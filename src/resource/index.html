@@ -31,7 +31,12 @@
     </table>
 
     <script>
-        const socket = new WebSocket('ws://localhost:19999/futu/ws');
+        // 获取当前页面的协议、主机和端口
+        const currentProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+        const currentHost = window.location.host;
+        // 拼接 WebSocket 的绝对路径
+        const wsUrl = `ws://${currentHost}/futu/ws`;
+        const socket = new WebSocket(wsUrl);
         const table = document.getElementById('data-table');
 
         socket.onmessage = (event) => {

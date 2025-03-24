@@ -18,6 +18,7 @@ apscheduler = "*"
 futu-api = "*"
 fastapi-websocket-pubsub = "*"
 jinja2 = "*"
+redis = "*"
 
 [dev-packages]
 

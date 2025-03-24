@@ -1,6 +1,5 @@
 import logging
 import os
-import threading
 import traceback
 from contextlib import asynccontextmanager
 
@@ -17,6 +16,9 @@ from src.cat.common.model.Response import error
 from src.cat.hit.controllor import ok_controller, futu_controller
 from src.cat.hit.service.FutuService import FutuService
 
+
+
+
 config = Config()
 batch = Batch()
 scheduler: BackgroundScheduler = batch.init_scheduler()
@@ -28,6 +30,7 @@ async def lifespan(app: FastAPI):
     if scheduler is not None and not scheduler.running:
         logging.getLogger(__name__).info("Starting up...")
         scheduler.start()
+
     yield
     if scheduler is not None:
         logging.getLogger(__name__).info("Shutting down...")
@@ -55,7 +58,6 @@ async def read_root(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})
 
 
-
 @app.exception_handler(HTTPException)
 async def custom_http_exception_handler(request: Request, exc: HTTPException):
     traceback.print_stack()
@@ -66,11 +68,3 @@ async def custom_http_exception_handler(request: Request, exc: HTTPException):
 async def validation_exception_handler(request: Request, exc: RequestValidationError):
     traceback.print_stack()
     return error(exc)
-
-
-def start_subscribe():
-    FutuService().subscribe()
-# 启动订阅
-subscribe_thread = threading.Thread(target=start_subscribe)
-subscribe_thread.start()
-
