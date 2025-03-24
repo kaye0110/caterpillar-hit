@@ -16,6 +16,8 @@ psycopg2-binary = "*"
 pydantic = "*"
 apscheduler = "*"
 futu-api = "*"
+fastapi-websocket-pubsub = "*"
+jinja2 = "*"
 
 [dev-packages]
 

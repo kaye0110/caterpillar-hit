@@ -18,6 +18,8 @@ def remove_duplicates(ranks: [Rank]) -> [Rank]:
 
 
 def sort(ranks: [Rank]) -> [Rank]:
+    if ranks is None or len(ranks) == 0:
+        return []
     ranks = remove_duplicates(ranks)
     # 处理 first_derivative 的排名
     first_derivatives = [r.first_derivative for r in ranks]

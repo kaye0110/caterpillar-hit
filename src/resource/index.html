@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebSocket Data Table</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            font-size: 12px; /* 字体放小 */
+        }
+
+        th,
+        td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+
+<body>
+    <table id="data-table">
+        <!-- 表头会在这里动态生成 -->
+    </table>
+
+    <script>
+        const socket = new WebSocket('ws://localhost:19999/futu/ws');
+        const table = document.getElementById('data-table');
+
+        socket.onmessage = (event) => {
+            try {
+                const data = JSON.parse(event.data);
+                console.log('Received data:', data);
+
+                // 清空表格
+                table.innerHTML = '';
+
+                if (data.length > 0) {
+                    // 定义要展示的列
+                    const headers = ['code', 'data_date', 'data_time', 'open_price', 'last_price', 'change_rate', 'first_derivative', 'second_derivative', 'second_derivative_mean', 'name'];
+
+                    // 创建表头
+                    const headerRow = table.insertRow();
+                    headers.forEach(header => {
+                        const th = document.createElement('th');
+                        th.textContent = header;
+                        headerRow.appendChild(th);
+                    });
+
+                    // 对数据按 change_rate 从大到小排序
+                    data.sort((a, b) => b.second_derivative_mean - a.second_derivative_mean);
+
+                    // 填充表格数据
+                    data.forEach(item => {
+                        const row = table.insertRow();
+                        headers.forEach(header => {
+                            const cell = row.insertCell();
+                            if (['change_rate', 'first_derivative', 'second_derivative', 'second_derivative_mean'].includes(header)) {
+                                cell.textContent = parseFloat(item[header]).toFixed(4); // 保留小数点后4位
+                            } else {
+                                cell.textContent = item[header];
+                            }
+                        });
+                    });
+                }
+            } catch (error) {
+                console.error('Error parsing JSON data:', error);
+            }
+        };
+
+        socket.onerror = (error) => {
+            console.error('WebSocket error:', error);
+        };
+
+        socket.onclose = () => {
+            console.log('WebSocket connection closed');
+        };
+    </script>
+</body>
+
+</html>

@@ -1,7 +1,7 @@
-import logging
 import warnings
 
 from src.cat.hit.model.Rank import Rank
+from src.cat.hit.service.RankComparator import sort
 
 warnings.filterwarnings("ignore", category=DeprecationWarning)
 
@@ -16,7 +16,7 @@ class QuoteAnalysis:
         self.result_rising = []
         self.result_falling = []
 
-        self.top_size = 10
+        self.top_size = 30
         pass
 
     def analysis(self) -> "QuoteAnalysis":
@@ -64,34 +64,85 @@ class QuoteAnalysis:
         if rising_top_speed is not None and len(rising_top_speed) > 0:
             result_rising_top_speed = rising_top_speed.apply(lambda row: self._convert_to_entity(row), axis=1).values.tolist()
             self.result_rising = self.result_rising + result_rising_top_speed
-            logging.getLogger(__name__).info("rising_top_speed: %s", result_rising_top_speed)
+            # logging.getLogger(__name__).info("rising_top_speed: %s", result_rising_top_speed)
 
         if rising_top_acceleration is not None and len(rising_top_acceleration) > 0:
             result_rising_top_acceleration = rising_top_acceleration.apply(lambda row: self._convert_to_entity(row), axis=1).values.tolist()
             self.result_rising = self.result_rising + result_rising_top_acceleration
-            logging.getLogger(__name__).info("rising_top_acceleration: %s", result_rising_top_acceleration)
+            # logging.getLogger(__name__).info("rising_top_acceleration: %s", result_rising_top_acceleration)
 
         if rising_top_acceleration_mean is not None and len(rising_top_acceleration_mean) > 0:
             result_rising_top_acceleration_mean = rising_top_acceleration_mean.apply(lambda row: self._convert_to_entity(row), axis=1).values.tolist()
             self.result_rising = self.result_rising + result_rising_top_acceleration_mean
-            logging.getLogger(__name__).info("rising_top_acceleration_mean: %s", result_rising_top_acceleration_mean)
+            # logging.getLogger(__name__).info("rising_top_acceleration_mean: %s", result_rising_top_acceleration_mean)
 
         if falling_top_speed is not None and len(falling_top_speed) > 0:
             result_falling_top_speed = falling_top_speed.apply(lambda row: self._convert_to_entity(row), axis=1).values.tolist()
             self.result_falling = self.result_falling + result_falling_top_speed
-            logging.getLogger(__name__).info("falling_top_speed: %s", result_falling_top_speed)
+            # logging.getLogger(__name__).info("falling_top_speed: %s", result_falling_top_speed)
 
         if falling_top_acceleration is not None and len(falling_top_acceleration) > 0:
             result_falling_top_acceleration = falling_top_acceleration.apply(lambda row: self._convert_to_entity(row), axis=1).values.tolist()
             self.result_falling = self.result_falling + result_falling_top_acceleration
-            logging.getLogger(__name__).info("falling_top_acceleration: %s", result_falling_top_acceleration)
+            # logging.getLogger(__name__).info("falling_top_acceleration: %s", result_falling_top_acceleration)
 
         if falling_top_acceleration_mean is not None and len(falling_top_acceleration_mean) > 0:
             result_falling_top_acceleration_mean = falling_top_acceleration_mean.apply(lambda row: self._convert_to_entity(row), axis=1).values.tolist()
             self.result_falling = self.result_falling + result_falling_top_acceleration_mean
-            logging.getLogger(__name__).info("falling_top_acceleration_mean: %s", result_falling_top_acceleration_mean)
+            # logging.getLogger(__name__).info("falling_top_acceleration_mean: %s", result_falling_top_acceleration_mean)
 
+        self.result_falling = sort(self.result_falling)
+        self.result_rising = sort(self.result_rising)
+
+        # self.print_rank_table()
         return self
+
+    def print_rank_table(self):
+        """
+        将 Rank 数组以表格形式打印到控制台。
+
+        Args:
+            ranks (List[Rank]): 需要打印的 Rank 对象列表。
+        """
+        # 定义所有字段名称
+        fields = [
+            'code', 'name', 'data_date', 'data_time',
+            'open_price', 'last_price', 'high_price', 'low_price', 'pre_close_price',
+            'change_rate', 'first_derivative', 'second_derivative', 'second_derivative_mean',
+            'last_first_derivative', 'last_sec_derivative', 'last_sec_derivative_mean',
+            'rank', 'last_rank', 'rank_first_derivative', 'rank_second_derivative', 'rank_second_derivative_mean'
+        ]
+
+        # 表头格式化（首字母大写，下划线替换为空格）
+        header = [field.replace('_', ' ').title() for field in fields]
+
+        # 准备数据行
+        data_rows = []
+        for rank in self.result_rising:
+            row = []
+            for field in fields:
+                value = getattr(rank, field)
+                # 将 None 显示为 '-'
+                row.append(str(value) if value is not None else '-')
+            data_rows.append(row)
+
+        # 计算每列的最大宽度
+        max_widths = {field: len(header[i]) for i, field in enumerate(fields)}
+        for row in data_rows:
+            for i, cell in enumerate(row):
+                if len(cell) > max_widths[fields[i]]:
+                    max_widths[fields[i]] = len(cell)
+
+        # 生成分隔符行
+        separator = ['-' * max_widths[field] for field in fields]
+
+        # 打印表格
+        print(' | '.join(header))
+        print(' | '.join(separator))
+        for row in data_rows:
+            # 对齐每列
+            formatted_row = [cell.ljust(max_widths[fields[i]]) for i, cell in enumerate(row)]
+            print(' | '.join(formatted_row))
 
     @staticmethod
     def _convert_to_entity(row):
@@ -112,7 +163,11 @@ class QuoteAnalysis:
             "last_sec_derivative": row.get('last_sec_derivative', 0),
             "last_sec_derivative_mean": row.get('last_sec_derivative_mean', 0),
             "rank": 0,
-            "last_rank": 0
+            "last_rank": 0,
+            "last_first_derivative": 0,
+            "rank_first_derivative": 0,
+            "rank_second_derivative": 0,
+            "rank_second_derivative_mean": 0
         }
         return Rank(**data)
 
